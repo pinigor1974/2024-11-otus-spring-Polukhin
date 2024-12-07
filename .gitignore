@@ -1,0 +1,23 @@
+# IDE stuff #
+##################
+*.iml
+*.ec
+*.ipr
+*.iws
+.idea
+*/.idea
+.vscode
+*/.vscode
+*/*/target
+*/*/dependency-reduced-pom.xml
+target
+**/scalastyle-output.xml
+*/.metals
+*/.bloop
+*/.sdkmanrc
+
+# Python
+*.pyc
+
+# Mac OS files
+.DS_Store
