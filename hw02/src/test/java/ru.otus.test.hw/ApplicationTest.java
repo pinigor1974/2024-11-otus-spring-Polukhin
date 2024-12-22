@@ -14,6 +14,7 @@ import ru.otus.hw.service.IOService;
 import ru.otus.hw.service.TestServiceImpl;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
 
@@ -35,5 +36,14 @@ public class ApplicationTest {
         var testServiceImpl = new TestServiceImpl(ioService, csvQuestionDao);
         var student = new Student("Igor", "Polukhin");
         Assertions.assertEquals(testServiceImpl.executeTestFor(student).getRightAnswersCount(), 1);
+
+        StringBuilder reduce = Stream.of("a", "b")
+
+                .reduce(new StringBuilder(), (sb, s) -> {
+            sb.append(s);
+            return sb;
+        }, (sb1, sb2) -> (sb1.append(sb2)));
+
+
     }
 }
