@@ -15,7 +15,7 @@ public class StudentServiceImpl implements StudentService {
     public Student determineCurrentStudent() {
         var firstName = localizedIOService.readStringWithPromptLocalized("StudentService.input.first.name");
         var lastName = localizedIOService.readStringWithPromptLocalized("StudentService.input.last.name");
-        this.student =  new Student(firstName, lastName, 0d);
+        this.student =  new Student(firstName, lastName);
         return this.student;
     }
 

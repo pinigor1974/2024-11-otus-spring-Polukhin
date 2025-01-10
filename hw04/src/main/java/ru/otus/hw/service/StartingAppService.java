@@ -31,9 +31,10 @@ public class StartingAppService {
 
     @ShellMethodAvailability(value = "isPublishEventCommandAvailable")
     @ShellMethod(value = "get score", key = {"score"})
-
     public Double getScore(){
-        return this.studentService.getStudent().Score();
+        return
+                (double) this.testRunnerService.getTestResult().getRightAnswersCount()
+                        / (long) this.testRunnerService.getTestResult().getAnsweredQuestions().size();
     }
 
 

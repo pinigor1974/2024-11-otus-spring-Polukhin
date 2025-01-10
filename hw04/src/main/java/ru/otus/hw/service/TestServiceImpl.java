@@ -1,5 +1,6 @@
 package ru.otus.hw.service;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.otus.hw.dao.QuestionDao;
@@ -17,6 +18,9 @@ public class TestServiceImpl implements TestService {
 
     private final QuestionDao questionDao;
 
+    @Getter
+    private TestResult testResult;
+
     @Override
     public TestResult executeTestFor(Student student) {
         localizedIOService.printLine("");
@@ -30,6 +34,8 @@ public class TestServiceImpl implements TestService {
             var isAnswerValid = question.answers().get(answer - 1).isCorrect(); // Задать вопрос, получить ответ
             testResult.applyAnswer(question, isAnswerValid);
         }
+       this.testResult = testResult;
+
         return testResult;
     }
 }
