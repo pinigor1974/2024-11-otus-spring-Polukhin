@@ -17,15 +17,17 @@ public class ResultServiceImpl implements ResultService {
     public void showResult(TestResult testResult) {
         localizedIOService.printLine("");
         localizedIOService.printLineLocalized("ResultService.test.results");
-        localizedIOService.printFormattedLine("ResultService.student", testResult.getStudent().getFullName());
-
-        localizedIOService.printFormattedLine("ResultService.answered.questions.count",
+        localizedIOService.printFormattedLine(
+                localizedIOService.getMessage("ResultService.student"), testResult.getStudent().getFullName());
+        localizedIOService.printFormattedLine(
+                localizedIOService.getMessage("ResultService.answered.questions.count"),
                         testResult.getAnsweredQuestions().size());
-        localizedIOService.printFormattedLine("ResultService.right.answers.count",
+        localizedIOService.printFormattedLine(
+                localizedIOService.getMessage("ResultService.right.answers.count"),
                 testResult.getRightAnswersCount());
 
         if (testResult.getRightAnswersCount() >= testConfig.getRightAnswersCountToPass()) {
-            localizedIOService.printLineLocalized("ResultService.passed.test");
+            localizedIOService.printLineLocalized(localizedIOService.getMessage("ResultService.passed.test"));
             return;
         }
         localizedIOService.printLineLocalized("ResultService.fail.test");
