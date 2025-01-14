@@ -5,13 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.otus.hw.Application;
+import ru.otus.hw.QuizApplication;
 import ru.otus.hw.dao.CsvQuestionDao;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = QuizApplication.class, properties = "spring.shell.interactive.enabled=false")
 public class QuestionDaoTest {
     @Autowired
     CsvQuestionDao csvQuestionDao;
