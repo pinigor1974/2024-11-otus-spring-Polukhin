@@ -52,7 +52,7 @@ class CommonHwTest {
         });
 
         var classesContainsFieldInjectedDependenciesOrProperties =
-                provider.findCandidateComponents(QuizApplication.class.getPackageName());
+                provider.findCandidateComponents(Application.class.getPackageName());
 
         var classesNames = classesContainsFieldInjectedDependenciesOrProperties.stream()
                 .map(BeanDefinition::getBeanClassName).collect(Collectors.joining("%n"));
