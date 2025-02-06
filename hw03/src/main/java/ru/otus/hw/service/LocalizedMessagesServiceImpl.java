@@ -5,8 +5,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.otus.hw.config.LocaleConfig;
 
-import java.util.Arrays;
-
 @RequiredArgsConstructor
 @Service
 public class LocalizedMessagesServiceImpl implements LocalizedMessagesService {
