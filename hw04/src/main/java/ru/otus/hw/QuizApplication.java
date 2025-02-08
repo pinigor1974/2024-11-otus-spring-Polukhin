@@ -14,9 +14,7 @@ import ru.otus.hw.service.TestRunnerService;
 @ComponentScan
 public class QuizApplication {
     public static void main(String[] args) {
-
         //Создать контекст Spring Boot приложения
         ApplicationContext context = SpringApplication.run(QuizApplication.class, args);
-int aaa = 1;
     }
 }

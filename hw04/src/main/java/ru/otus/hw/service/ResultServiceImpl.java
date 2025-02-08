@@ -20,7 +20,7 @@ public class ResultServiceImpl implements ResultService {
         localizedIOService.printFormattedLine(
                 localizedIOService.getMessage("ResultService.student", testResult.getStudent().getFullName()));
         localizedIOService.printFormattedLine(
-                localizedIOService.getMessage("ResultService.answered.questions.count", testResult.getAnsweredQuestions()));
+                localizedIOService.getMessage("ResultService.answered.questions.count", testResult.getAnsweredQuestions().size()));
         localizedIOService.printFormattedLine(
                 localizedIOService.getMessage("ResultService.right.answers.count", testResult.getRightAnswersCount()),
                 testResult.getRightAnswersCount());
