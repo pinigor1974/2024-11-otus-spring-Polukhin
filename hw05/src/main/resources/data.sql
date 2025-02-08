@@ -1,4 +1,4 @@
-insert into authors(full_name)
+    insert into authors(full_name)
 values ('Author_1'), ('Author_2'), ('Author_3');
 
 insert into genres(name)

@@ -2,18 +2,22 @@ package ru.otus.hw.repositories;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -26,7 +30,10 @@ public class JdbcBookRepository implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        return Optional.empty();
+
+        return Optional.ofNullable(namedParameterJdbcTemplate.query("select * from book where id=:id"
+                , Map.of("id", id)
+                , new BookResultSetExtractor()));
     }
 
     @Override
@@ -48,7 +55,9 @@ public class JdbcBookRepository implements BookRepository {
 
     @Override
     public void deleteById(long id) {
-        //...
+        namedParameterJdbcTemplate.update("delete from book where id=:id"
+                , Map.of("id", id)
+        );
     }
 
     private List<Book> getAllBooksWithoutGenres() {
@@ -88,11 +97,23 @@ public class JdbcBookRepository implements BookRepository {
     private void batchInsertGenresRelationsFor(Book book) {
         // Использовать метод batchUpdate
         namedParameterJdbcTemplate.batchUpdate(
-                "update ")
+                "insert into books_genres  "
+        , new BatchPreparedStatementSetter() {
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+
+                    }
+
+                    public int getBatchSize() {
+                        return book.getGenres().size();
+                    }
+                }
+                    );
     }
 
     private void removeGenresRelationsFor(Book book) {
-        //...
+        namedParameterJdbcTemplate.update(
+                "delete from books_genres where book_id = :book_id"
+        , new MapSqlParameterSource("book_id", book.getId()));
     }
 
     private static class BookRowMapper implements RowMapper<Book> {
@@ -110,7 +131,10 @@ public class JdbcBookRepository implements BookRepository {
 
         @Override
         public Book extractData(ResultSet rs) throws SQLException, DataAccessException {
-            return null;
+            return Book.builder()
+                    .id(rs.getLong("id"))
+                    .title(rs.getString("title"))
+                    .build();
         }
     }
 

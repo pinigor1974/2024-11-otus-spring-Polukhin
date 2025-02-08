@@ -1,15 +1,9 @@
 package ru.otus.hw.repositories;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.otus.hw.models.Author;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,12 +17,10 @@ public class JdbcAuthorRepository implements AuthorRepository {
     @Override
     public List<Author> findAll() {
 
-        return jdbcTemplate.query("select id, fullname from authors", (rs, rowNum) -> {
-            return Author.builder()
-                    .id(rs.getLong("id"))
-                    .fullName(rs.getString("full"))
-                    .build();
-        });
+        return jdbcTemplate.query("select id, fullname from authors", (rs, rowNum) -> Author.builder()
+                .id(rs.getLong("id"))
+                .fullName(rs.getString("full"))
+                .build());
     }
 
     @Override
