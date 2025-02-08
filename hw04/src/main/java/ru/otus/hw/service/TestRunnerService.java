@@ -4,5 +4,6 @@ import ru.otus.hw.domain.TestResult;
 
 public interface TestRunnerService {
     void run();
+
     TestResult getTestResult();
 }
