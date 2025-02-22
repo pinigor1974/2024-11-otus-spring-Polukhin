@@ -16,9 +16,9 @@ public class JdbcAuthorRepository implements AuthorRepository {
     @Override
     public List<Author> findAll() {
 
-        return namedParameterJdbcTemplate.query("select id, fullname from authors", (rs, rowNum) -> Author.builder()
+        return namedParameterJdbcTemplate.query("select * from authors", (rs, rowNum) -> Author.builder()
                 .id(rs.getLong("id"))
-                .fullName(rs.getString("full"))
+                .fullName(rs.getString("full_name"))
                 .build());
     }
 
