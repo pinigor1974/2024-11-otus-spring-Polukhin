@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import ru.otus.hw.configuration.DBConfiguration;
+import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Репозиторий на основе Jdbc для работы с книгами ")
 @JdbcTest
@@ -27,6 +30,7 @@ class JdbcBookRepositoryTest {
 
     @Autowired
     private JdbcBookRepository repositoryJdbc;
+
 
     private List<Author> dbAuthors;
 
@@ -107,10 +111,23 @@ class JdbcBookRepositoryTest {
         assertThat(repositoryJdbc.findById(1L)).isEmpty();
     }
 
-    @DisplayName("должен не найти книгу по id ")
+    @DisplayName("должен не сохранить книгу по id ")
     @Test
-    void shouldNotFoundBook() {
-        assertThat(repositoryJdbc.findById(-1L)).isEmpty();
+    void shouldNotSaveBook() {
+        assertThrows(EntityNotFoundException.class, () -> {
+            repositoryJdbc.save(
+                    Book.builder()
+                            .id(-1L)
+                            .title("unknown")
+                            .author(
+                                    Author
+                                            .builder()
+                                            .id(-1L)
+                                            .fullName("unknown")
+                                            .build()
+                            ).build()
+            );
+        });
     }
 
 
