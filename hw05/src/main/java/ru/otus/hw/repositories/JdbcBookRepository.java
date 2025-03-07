@@ -1,5 +1,6 @@
 package ru.otus.hw.repositories;
 
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -12,6 +13,7 @@ import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,23 +35,29 @@ public class JdbcBookRepository implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        var genres = genreRepository.findAllByIds(
-                getBookGenreRelationFor(
-                        Book.builder().id(id).build()).stream().map(bgr -> bgr.genreId).collect(Collectors.toSet()
-                )
-        );
-
-
-        Optional<Book> book = Optional.ofNullable(namedParameterJdbcTemplate.query("select * from books where id=:id"
-                , Map.of("id", id)
-                , new BookResultSetExtractor()));
-
-        book.ifPresent(b -> {
-            b.setGenres(genres);
-            Optional<Author> author = authorRepository.findById(b.getAuthor().getId());
-            author.ifPresent(b::setAuthor);
-        });
-        return book;
+        var bookRecords = namedParameterJdbcTemplate.query("""
+                        select b.id as b_id, b.title as b_title, a.id as a_id,
+                         a.full_name as a_full_name, g.id g_id, g.name as g_name from books b
+                        left outer join  authors a on a.id = b.author_id
+                        left outer join  books_genres bg on bg.book_id = b.id
+                        left outer join  genres g on bg.genre_id = g.id  where b.id = :id
+                        """,
+                new MapSqlParameterSource(Map.of("id", id)),
+                (rs, i) -> BookRecord.builder()
+                        .bId(rs.getLong("b_id"))
+                        .bTitle(rs.getString("b_title"))
+                        .aId(rs.getLong("a_id"))
+                        .aFullName(rs.getString("a_full_name"))
+                        .gId(rs.getLong("g_id"))
+                        .gName(rs.getString("g_name"))
+                        .build());
+        var bookRecord = bookRecords.isEmpty() ? null : bookRecords.iterator().next();
+        return bookRecords.isEmpty() ? Optional.empty() : Optional.of(Book.builder()
+                .id(bookRecord.bId())
+                .title(bookRecord.bTitle())
+                .author(Author.builder().id(bookRecord.aId()).fullName(bookRecord.aFullName()).build())
+                .genres(bookRecords.stream().map(br -> Genre.builder().id(br.gId()).name(br.gName()).build()).toList())
+                .build());
     }
 
     @Override
@@ -192,5 +200,9 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     private record BookGenreRelation(long bookId, long genreId) {
+    }
+
+    @Builder
+    private record BookRecord(Long bId, String bTitle, Long aId, String aFullName, Long gId, String gName) {
     }
 }

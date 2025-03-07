@@ -107,6 +107,13 @@ class JdbcBookRepositoryTest {
         assertThat(repositoryJdbc.findById(1L)).isEmpty();
     }
 
+    @DisplayName("должен не найти книгу по id ")
+    @Test
+    void shouldNotFoundBook() {
+        assertThat(repositoryJdbc.findById(-1L)).isEmpty();
+    }
+
+
     private static List<Author> getDbAuthors() {
         return IntStream.range(1, 4).boxed()
                 .map(id -> new Author(id, "Author_" + id))
