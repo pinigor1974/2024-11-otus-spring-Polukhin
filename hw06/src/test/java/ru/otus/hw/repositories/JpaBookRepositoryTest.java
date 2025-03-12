@@ -6,10 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.context.annotation.Import;
-import ru.otus.hw.configuration.DBConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+import ru.otus.hw.Application;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
@@ -19,17 +18,15 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Репозиторий на основе Jdbc для работы с книгами ")
-@JdbcTest
-@Import({JdbcBookRepository.class, JdbcGenreRepository.class, JdbcAuthorRepository.class, DBConfiguration.class})
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class JdbcBookRepositoryTest {
+@SpringBootTest(classes = Application.class, properties = {"spring.shell.interactive.enabled=false"})
+@Transactional
+class JpaBookRepositoryTest {
 
     @Autowired
-    private JdbcBookRepository repositoryJdbc;
+    private JpaBookRepository jpaBookRepository;
 
 
     private List<Author> dbAuthors;
@@ -45,37 +42,37 @@ class JdbcBookRepositoryTest {
         dbBooks = getDbBooks(dbAuthors, dbGenres);
     }
 
+    @DisplayName("должен загружать список всех книг")
+    @Test
+    void shouldReturnCorrectBooksList() {
+        var actualBooks = jpaBookRepository.findAll();
+        var expectedBooks = dbBooks;
+        areListBookTheSame(actualBooks, expectedBooks);
+        actualBooks.forEach(System.out::println);
+    }
+
+
     @DisplayName("должен загружать книгу по id")
     @ParameterizedTest
     @MethodSource("getDbBooks")
     void shouldReturnCorrectBookById(Book expectedBook) {
-        var actualBook = repositoryJdbc.findById(expectedBook.getId());
-        assertThat(actualBook).isPresent()
-                .get()
-                .isEqualTo(expectedBook);
+        var actualBook = jpaBookRepository.findById(expectedBook.getId());
+        areBookTheSame(actualBook.get(), expectedBook);
     }
 
-    @DisplayName("должен загружать список всех книг")
-    @Test
-    void shouldReturnCorrectBooksList() {
-        var actualBooks = repositoryJdbc.findAll();
-        var expectedBooks = dbBooks;
 
-        assertThat(actualBooks).containsExactlyElementsOf(expectedBooks);
-        actualBooks.forEach(System.out::println);
-    }
 
     @DisplayName("должен сохранять новую книгу")
     @Test
     void shouldSaveNewBook() {
-        var expectedBook = new Book(0, "BookTitle_10500", dbAuthors.get(0),
+        var expectedBook = new Book(4, "BookTitle_10500", dbAuthors.get(0),
                 List.of(dbGenres.get(0), dbGenres.get(2)));
-        var returnedBook = repositoryJdbc.save(expectedBook);
+        var returnedBook = jpaBookRepository.save(expectedBook);
         assertThat(returnedBook).isNotNull()
                 .matches(book -> book.getId() > 0)
                 .usingRecursiveComparison().ignoringExpectedNullFields().isEqualTo(expectedBook);
 
-        assertThat(repositoryJdbc.findById(returnedBook.getId()))
+        assertThat(jpaBookRepository.findById(returnedBook.getId()))
                 .isPresent()
                 .get()
                 .isEqualTo(returnedBook);
@@ -87,17 +84,17 @@ class JdbcBookRepositoryTest {
         var expectedBook = new Book(1L, "BookTitle_10500", dbAuthors.get(2),
                 List.of(dbGenres.get(4), dbGenres.get(5)));
 
-        assertThat(repositoryJdbc.findById(expectedBook.getId()))
+        assertThat(jpaBookRepository.findById(expectedBook.getId()))
                 .isPresent()
                 .get()
                 .isNotEqualTo(expectedBook);
 
-        var returnedBook = repositoryJdbc.save(expectedBook);
+        var returnedBook = jpaBookRepository.save(expectedBook);
         assertThat(returnedBook).isNotNull()
                 .matches(book -> book.getId() > 0)
                 .usingRecursiveComparison().ignoringExpectedNullFields().isEqualTo(expectedBook);
 
-        assertThat(repositoryJdbc.findById(returnedBook.getId()))
+        assertThat(jpaBookRepository.findById(returnedBook.getId()))
                 .isPresent()
                 .get()
                 .isEqualTo(returnedBook);
@@ -106,16 +103,16 @@ class JdbcBookRepositoryTest {
     @DisplayName("должен удалять книгу по id ")
     @Test
     void shouldDeleteBook() {
-        assertThat(repositoryJdbc.findById(1L)).isPresent();
-        repositoryJdbc.deleteById(1L);
-        assertThat(repositoryJdbc.findById(1L)).isEmpty();
+        assertThat(jpaBookRepository.findById(1L)).isPresent();
+        jpaBookRepository.deleteById(1L);
+        assertThat(jpaBookRepository.findById(1L)).isEmpty();
     }
 
     @DisplayName("должен не сохранить книгу по id ")
     @Test
     void shouldNotSaveBook() {
         assertThrows(EntityNotFoundException.class, () -> {
-            repositoryJdbc.save(
+            jpaBookRepository.save(
                     Book.builder()
                             .id(-1L)
                             .title("unknown")
@@ -141,6 +138,7 @@ class JdbcBookRepositoryTest {
         return IntStream.range(1, 7).boxed()
                 .map(id -> new Genre(id, "Genre_" + id))
                 .toList();
+
     }
 
     private static List<Book> getDbBooks(List<Author> dbAuthors, List<Genre> dbGenres) {
@@ -157,5 +155,17 @@ class JdbcBookRepositoryTest {
         var dbAuthors = getDbAuthors();
         var dbGenres = getDbGenres();
         return getDbBooks(dbAuthors, dbGenres);
+    }
+
+    private void areBookTheSame(Book book1, Book book2){
+        assertThat(book1.getId()).isEqualTo(book2.getId()) ;
+        assertThat(book1.getId()).isEqualTo(book2.getId());
+        assertThat(book1.getAuthor()).isEqualTo(book2.getAuthor());
+        assertThat(book1.getGenres()).containsExactlyElementsOf(book2.getGenres());
+    }
+    private void areListBookTheSame(List<Book> book1, List<Book> book2){
+        for (int i = 0; i < book1.size(); ++i){
+            areBookTheSame(book1.get(i), book2.get(i));
+        }
     }
 }
