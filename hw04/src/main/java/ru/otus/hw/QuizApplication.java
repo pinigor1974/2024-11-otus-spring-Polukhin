@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import ru.otus.hw.service.TestRunnerService;
 
 @ConfigurationPropertiesScan
 @SpringBootApplication
@@ -14,9 +13,7 @@ import ru.otus.hw.service.TestRunnerService;
 @ComponentScan
 public class QuizApplication {
     public static void main(String[] args) {
-
         //Создать контекст Spring Boot приложения
         ApplicationContext context = SpringApplication.run(QuizApplication.class, args);
-int aaa = 1;
     }
 }
