@@ -10,10 +10,10 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
 public class GenreServiceImpl implements GenreService {
     private final GenreRepository genreRepository;
 
+    @Transactional
     @Override
     public List<Genre> findAll() {
         return genreRepository.findAll();

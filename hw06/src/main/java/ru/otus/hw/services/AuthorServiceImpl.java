@@ -10,10 +10,10 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
 public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public List<Author> findAll() {
         return authorRepository.findAll();

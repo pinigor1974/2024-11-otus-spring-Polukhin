@@ -17,7 +17,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
 public class BookServiceImpl implements BookService {
     private final AuthorRepository authorRepository;
 
@@ -25,26 +24,31 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Book> findById(long id) {
         return bookRepository.findById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Book> findAll() {
         return bookRepository.findAll();
     }
 
+    @Transactional
     @Override
     public Book insert(String title, long authorId, Set<Long> genresIds) {
         return save(0, title, authorId, genresIds);
     }
 
+    @Transactional
     @Override
     public Book update(long id, String title, long authorId, Set<Long> genresIds) {
         return save(id, title, authorId, genresIds);
     }
 
+    @Transactional
     @Override
     public void deleteById(long id) {
         bookRepository.deleteById(id);
