@@ -18,7 +18,7 @@ public class JpaAuthorRepository implements AuthorRepository {
 
     @Override
     public List<Author> findAll() {
-        return em.createNamedQuery("select * from Authors", Author.class).getResultList();
+        return em.createQuery("from Author", Author.class).getResultList();
     }
 
     @Override

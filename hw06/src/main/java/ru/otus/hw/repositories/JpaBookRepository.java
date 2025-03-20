@@ -33,7 +33,6 @@ public class JpaBookRepository implements BookRepository {
     @Override
     public List<Book> findAll() {
         return em.createQuery(" from Book", Book.class)
-                .setHint(JAKARTA_HINT_FETCH_GRAPH, em.getEntityGraph("books"))
                 .getResultList();
     }
 

@@ -18,12 +18,12 @@ public class JpaGenreRepository implements GenreRepository {
 
     @Override
     public List<Genre> findAll() {
-        return em.createNamedQuery("select * from Genre", Genre.class).getResultList();
+        return em.createQuery("from Genre", Genre.class).getResultList();
     }
 
     @Override
     public List<Genre> findAllByIds(Set<Long> ids) {
-        return em.createNamedQuery("select * from genres where id in (:ids) ", Genre.class)
+        return em.createQuery("from Genre where id in (:ids) ", Genre.class)
                 .setParameter("ids", ids)
                 .getResultList();
     }
