@@ -1,8 +1,10 @@
 package ru.otus.hw.repositories;
 
+import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Repository;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Book;
@@ -32,8 +34,12 @@ public class JpaBookRepository implements BookRepository {
 
     @Override
     public List<Book> findAll() {
-        return em.createQuery(" from Book", Book.class)
+        EntityGraph entityGraph = em.getEntityGraph("books");
+        List<Book> books = em.createQuery(" from Book", Book.class)
+                .setHint("jakarta.persistence.loadgraph", entityGraph)
                 .getResultList();
+        books.forEach(b -> Hibernate.initialize(b.getComments()));
+        return books;
     }
 
     @Override
