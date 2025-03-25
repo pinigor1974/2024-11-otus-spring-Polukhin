@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +15,9 @@ public class JpaCommentRepository implements CommentRepository {
     private final EntityManager em;
 
     @Override
-    public List<Comment> findAll(Book book) {
+    public List<Comment> findAll(long bookId) {
         return em.createQuery("from Comment c where c.book.id = :bookId", Comment.class)
-                .setParameter("bookId", book.getId())
+                .setParameter("bookId", bookId)
                 .getResultList();
     }
 

@@ -23,13 +23,15 @@ public class JpaBookRepository implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        return Optional.ofNullable(
+        var book = Optional.ofNullable(
                 em.find(
                         Book.class,
                         id,
                         Map.of(JAKARTA_HINT_FETCH_GRAPH, em.getEntityGraph("books"))
                 )
         );
+        book.ifPresent(b -> Hibernate.initialize(b.getComments()));
+        return book;
     }
 
     @Override
