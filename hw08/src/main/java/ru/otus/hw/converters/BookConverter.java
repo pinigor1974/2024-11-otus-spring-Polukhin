@@ -24,7 +24,7 @@ public class BookConverter {
                 .map(commentConverter::commentToString)
                 .map("{%s}"::formatted)
                 .collect(Collectors.joining(", "));
-        return "Id: %d, title: %s, author: {%s}, genres: [%s], comments: [%s]".formatted(
+        return "Id: %s, title: %s, author: {%s}, genres: [%s], comments: [%s]".formatted(
                 book.getId(),
                 book.getTitle(),
                 authorConverter.authorToString(book.getAuthor()),

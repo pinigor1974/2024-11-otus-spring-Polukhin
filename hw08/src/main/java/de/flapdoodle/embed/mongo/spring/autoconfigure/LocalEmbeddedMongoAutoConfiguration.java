@@ -59,18 +59,19 @@ import java.util.function.Function;
 @AutoConfiguration(before = {
         MongoAutoConfiguration.class, MongoReactiveAutoConfiguration.class
 })
-@EnableConfigurationProperties({ MongoProperties.class, EmbeddedMongoProperties.class })
-@ConditionalOnClass({ MongoClientSettings.class, Mongod.class })
+@EnableConfigurationProperties({MongoProperties.class, EmbeddedMongoProperties.class})
+@ConditionalOnClass({MongoClientSettings.class, Mongod.class})
 @Import({
         LocalEmbeddedMongoAutoConfiguration.MongoPropertiesDependsOnBeanFactoryPostProcessor.class,
         LocalEmbeddedMongoAutoConfiguration.EmbeddedMongoClientDependsOnBeanFactoryPostProcessor.class,
         LocalEmbeddedMongoAutoConfiguration.EmbeddedReactiveStreamsMongoClientDependsOnBeanFactoryPostProcessor.class,
 })
 public class LocalEmbeddedMongoAutoConfiguration {
-    private static final byte[] IP4_LOOPBACK_ADDRESS = { 127, 0, 0, 1 };
-    private static final byte[] IP6_LOOPBACK_ADDRESS = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+    private static final byte[] IP4_LOOPBACK_ADDRESS = {127, 0, 0, 1};
 
-    @ConditionalOnClass({ com.mongodb.client.MongoClient.class, MongoClientFactoryBean.class })
+    private static final byte[] IP6_LOOPBACK_ADDRESS = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+
+    @ConditionalOnClass({com.mongodb.client.MongoClient.class, MongoClientFactoryBean.class})
     static class SyncClientServerWrapperConfig {
 
         @Bean(initMethod = "start", destroyMethod = "stop")
@@ -86,7 +87,7 @@ public class LocalEmbeddedMongoAutoConfiguration {
 
     }
 
-    @ConditionalOnClass({ com.mongodb.reactivestreams.client.MongoClient.class, ReactiveMongoClientFactoryBean.class })
+    @ConditionalOnClass({com.mongodb.reactivestreams.client.MongoClient.class, ReactiveMongoClientFactoryBean.class})
     static class ReactiveClientServerWrapperConfig {
 
         @Bean(initMethod = "start", destroyMethod = "stop")
@@ -178,7 +179,7 @@ public class LocalEmbeddedMongoAutoConfiguration {
                     .withProgressListener(Start.to(ProgressListener.class).initializedWith(progressListener));
         }
 
-        if (embeddedProperties.getDatabaseDir()!=null) {
+        if (embeddedProperties.getDatabaseDir() != null) {
             Path databaseDirPath = Paths.get(embeddedProperties.getDatabaseDir());
             if (!Files.exists(databaseDirPath)) {
                 Try.run(() -> Files.createDirectories(databaseDirPath));
@@ -215,17 +216,17 @@ public class LocalEmbeddedMongoAutoConfiguration {
     }
 
     @Bean
-    public BeanPostProcessor fixTransactionAndAuth(EmbeddedMongoProperties embeddedProperties, MongoProperties mongoProperties) {
+    public BeanPostProcessor fixTransactionAndAuth(
+            EmbeddedMongoProperties embeddedProperties,
+            MongoProperties mongoProperties
+    ) {
         EmbeddedMongoProperties.Storage storage = embeddedProperties.getStorage();
-
         return new TypedBeanPostProcessor<>(MongodArguments.class, src -> {
             ImmutableMongodArguments.Builder builder = MongodArguments.builder()
                     .from(src);
-
             if (storage != null && storage.getReplSetName() != null && !src.replication().isPresent()) {
                 String replSetName = storage.getReplSetName();
                 int oplogSize = (storage.getOplogSize() != null) ? (int) storage.getOplogSize().toMegabytes() : 0;
-
                 builder
                         .replication(Storage.of(replSetName, oplogSize))
                         .useNoJournal(false);
@@ -234,11 +235,9 @@ public class LocalEmbeddedMongoAutoConfiguration {
                     builder.useNoJournal(false);
                 }
             }
-
             if (mongoProperties.getUsername() != null && mongoProperties.getPassword() != null) {
                 builder.auth(true);
             }
-
             return builder.build();
         }, Function.identity());
     }
@@ -247,7 +246,7 @@ public class LocalEmbeddedMongoAutoConfiguration {
      * Post processor to ensure that {@link MongoProperties} beans depend
      * on any {@link Net} beans.
      */
-    @ConditionalOnClass({ MongoProperties.class })
+    @ConditionalOnClass({MongoProperties.class})
     static class MongoPropertiesDependsOnBeanFactoryPostProcessor
             extends AbstractDependsOnBeanFactoryPostProcessor {
 
@@ -261,7 +260,7 @@ public class LocalEmbeddedMongoAutoConfiguration {
      * Post processor to ensure that {@link com.mongodb.client.MongoClient} beans depend
      * on any {@link MongodWrapper} beans.
      */
-    @ConditionalOnClass({ com.mongodb.client.MongoClient.class, MongoClientFactoryBean.class })
+    @ConditionalOnClass({com.mongodb.client.MongoClient.class, MongoClientFactoryBean.class})
     static class EmbeddedMongoClientDependsOnBeanFactoryPostProcessor
             extends AbstractDependsOnBeanFactoryPostProcessor {
 
@@ -276,16 +275,22 @@ public class LocalEmbeddedMongoAutoConfiguration {
      * {@link com.mongodb.reactivestreams.client.MongoClient} beans depend on any
      * {@link MongodWrapper} beans.
      */
-    @ConditionalOnClass({ com.mongodb.reactivestreams.client.MongoClient.class, ReactiveMongoClientFactoryBean.class })
+    @ConditionalOnClass({com.mongodb.reactivestreams.client.MongoClient.class, ReactiveMongoClientFactoryBean.class})
     static class EmbeddedReactiveStreamsMongoClientDependsOnBeanFactoryPostProcessor
             extends AbstractDependsOnBeanFactoryPostProcessor {
 
         public EmbeddedReactiveStreamsMongoClientDependsOnBeanFactoryPostProcessor() {
-            super(com.mongodb.reactivestreams.client.MongoClient.class, ReactiveMongoClientFactoryBean.class, MongodWrapper.class);
+            super(
+                    com.mongodb.reactivestreams.client.MongoClient.class,
+                    ReactiveMongoClientFactoryBean.class,
+                    MongodWrapper.class
+            );
         }
     }
 
     private static Logger logger() {
-        return LoggerFactory.getLogger(de.flapdoodle.embed.mongo.spring.autoconfigure.EmbeddedMongoAutoConfiguration.class.getPackage().getName() + ".EmbeddedMongo");
+        return LoggerFactory.getLogger(
+                EmbeddedMongoAutoConfiguration.class.getPackage().getName() + ".EmbeddedMongo"
+        );
     }
 }

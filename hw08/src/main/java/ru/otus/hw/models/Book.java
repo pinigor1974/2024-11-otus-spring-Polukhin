@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -19,14 +20,15 @@ import java.util.Objects;
 @Document(collection = "books")
 public class Book {
     @Id
-    private long id;
+    private String id;
 
     private String title;
 
+    @DBRef
     private Author author;
 
+    @DBRef
     private List<Genre> genres;
-
 
     private List<Comment> comments;
 
@@ -39,11 +41,22 @@ public class Book {
             return false;
         }
         Book book = (Book) o;
-        return id == book.id && Objects.equals(title, book.title) && Objects.equals(author, book.author);
+        return id.equals(book.id) && Objects.equals(title, book.title) && Objects.equals(author, book.author);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, title, author);
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", author=" + author +
+                ", genres=" + genres +
+                ", comments=" + comments +
+                '}';
     }
 }

@@ -2,7 +2,7 @@ spring:
   data:
     mongodb:
       port: 0 # when flapdoodle using
-      database: test
+      database: company
 
 de:
   flapdoodle:
