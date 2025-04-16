@@ -98,6 +98,16 @@ class BookControllerTest {
         verify(bookRepository, times(1)).save(any(Book.class));
     }
 
+    @Test
+    void shouldDeleteBookAndRedirectToContextPath() throws Exception {
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(dbBooks.get(0)));
+        mvc.perform(get("/delete")
+                        .param("id", "1")
+                )
+                .andExpect(view().name("redirect:/"));
+        verify(bookRepository, times(1)).deleteById(1L);
+    }
+
     private static List<Author> getDbAuthors() {
         return IntStream.range(1, 4).boxed()
                 .map(id -> new Author(id, "Author_" + id))

@@ -35,6 +35,15 @@ public class BookController {
         return "list";
     }
 
+
+    @GetMapping("/delete")
+    public String deleteBook(@RequestParam("id") long id,
+                           Model model) {
+        bookService.deleteById(id);
+        return "redirect:/";
+
+    }
+
     @GetMapping("/edit")
     public String editPage(@RequestParam("id") long id,
                            Model model) {

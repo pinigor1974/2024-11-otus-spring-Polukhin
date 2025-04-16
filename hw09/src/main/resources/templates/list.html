@@ -37,6 +37,8 @@
         <th>Author</th>
         <th>Genres</th>
         <th>Comments</th>
+        <th>Edit</th>
+        <th>Delete</th>
     </tr>
     </thead>
     <tbody>
@@ -52,6 +54,9 @@
 
         <td>
             <a href="edit.html" th:href="@{/edit(id=${book.id})}">Edit</a>
+        </td>
+        <td>
+            <a href="list.html" th:href="@{/delete(id=${book.id})}">Delete</a>
         </td>
     </tr>
     </tbody>
