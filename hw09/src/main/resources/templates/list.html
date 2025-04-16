@@ -33,7 +33,6 @@
     <thead>
     <tr>
         <th>Title</th>
-        <th>Action</th>
         <th>Author</th>
         <th>Genres</th>
         <th>Comments</th>
@@ -43,7 +42,6 @@
     </thead>
     <tbody>
     <tr th:each="book : ${books}">
-        <td th:text="${book.title}"></td>
         <td th:text="${book.title}"><span th:text="${book.title}" th:remove="tag">book</span></td>
         <td th:text="${book.author.fullName}"></td>
         <td th:text="${book.genres}"></td>
