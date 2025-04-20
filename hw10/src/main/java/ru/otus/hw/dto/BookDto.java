@@ -2,13 +2,11 @@ package ru.otus.hw.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 import ru.otus.hw.models.Genre;
@@ -36,13 +34,11 @@ public class BookDto {
     private Long authorId;
 
     @NotEmpty
-    private Set<Long> genreIds ;
+    private Set<Long> genreIds  = Collections.emptySet();
 
-    private List<String> genreNames ;
+    private List<String> genreNames = Collections.emptyList();
 
-    private List<String> commentNames ;
-
-
+    private List<String> commentNames = Collections.emptyList();
 
     public static BookDto fromDomainObject(Book  b) {
         return BookDto
@@ -55,6 +51,10 @@ public class BookDto {
                 .commentNames(b.getComments().stream().map(Comment::getData).toList())
                 .title(b.getTitle())
                 .build();
+    }
+
+    public static BookDto fromDO(Optional<Book>  book) {
+        return book.map(BookDto::fromDomainObject).orElse(new BookDto());
     }
 }
 

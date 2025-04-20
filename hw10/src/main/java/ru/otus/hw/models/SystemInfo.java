@@ -1,9 +1,13 @@
 package ru.otus.hw.models;
 
 public class SystemInfo {
+
     private final String osName;
+
     private final String timeZone;
+
     private final String osArch;
+
     private final int processorsCount;
 
     public SystemInfo(String osName, String timeZone, String osArch, int processorsCount) {

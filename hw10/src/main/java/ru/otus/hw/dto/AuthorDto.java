@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.otus.hw.models.Author;
-import ru.otus.hw.models.Book;
 
 @Data
 @AllArgsConstructor

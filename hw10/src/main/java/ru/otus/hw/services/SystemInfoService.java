@@ -6,7 +6,7 @@ import ru.otus.hw.models.SystemInfo;
 @Service
 public class SystemInfoService {
 
-    public SystemInfo getSystemInfo(){
+    public SystemInfo getSystemInfo() {
         String osName = System.getProperty("os.name");
         String timeZone = System.getProperty("user.timezone");
         String osArch = System.getProperty("os.arch");

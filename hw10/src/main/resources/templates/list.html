@@ -49,7 +49,7 @@
 
 <h3>books:</h3>
 
-<a href = "add.html" th:href = "@{/add}">Add new</a>
+<a href = "add.html" th:href = "@{/add(id=-1)}">Add new</a>
 <table class="books">
     <thead>
     <tr>
@@ -59,6 +59,7 @@
         <th>Genres</th>
         <th>Comments</th>
         <th>Edit</th>
+        <th>Delete</th>
     </tr>
     </thead>
     <tbody>
@@ -68,7 +69,16 @@
 <script>
     $(function () {
         $.get('/api/books').done(function (books) {
-            books.forEach(function (book) {
+
+            loadBooks(books);
+        })
+        loadSystemInfo();
+    })
+
+    function loadBooks(books) {
+    $('tbody').empty();
+     books.forEach(function (book) {
+
                 $('tbody').append(`
                     <tr>
                         <td>${book.id}</td>
@@ -76,14 +86,20 @@
                         <td>${book.authorFullName}</td>
                         <td>${book.genreNames}</td>
                         <td>${book.commentNames}</td>
-                        <td><a href = "add.html?id=${book.id}" th:href = "@{/add}">Edit</a></td>
+                        <td><a href = "/add?id=${book.id}">Edit</a></td>
+                        <td><a href="#" onclick="deleteBook(${book.id});return true;">Delete</a></td>
                     </tr>
                 `)
             })
+    }
+    function deleteBook(bookId) {
+            $.get('/api/books/delete/' + bookId).done(function () {
+                $.get('/api/books').done(function (books) {
+                     loadBooks(books);
+                })
         })
-        loadSystemInfo();
-    })
 
+    }
     function loadSystemInfo() {
         const systemInfoContainer = document.getElementById("systemInfoContainer")
         fetch("api/server/system/info")

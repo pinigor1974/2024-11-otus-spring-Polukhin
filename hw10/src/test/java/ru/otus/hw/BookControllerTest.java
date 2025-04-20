@@ -1,33 +1,32 @@
 package ru.otus.hw;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.IntStream;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import ru.otus.hw.rest.NotFoundException;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 import ru.otus.hw.models.Genre;
 import ru.otus.hw.repositories.BookRepository;
+import ru.otus.hw.services.BookService;
+import static ru.otus.hw.rest.GlobalExceptionHandler.ERROR_STRING;
+
 
 @AutoConfigureMockMvc
 @SpringBootTest(classes = {Application.class})
@@ -35,6 +34,12 @@ class BookControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @MockitoBean
+    private BookService bookService;
 
     protected List<Author> dbAuthors;
 
@@ -89,4 +94,45 @@ class BookControllerTest {
                 ))
                 .toList();
     }
+
+    @Test
+    void shouldReturnCorrectBooksList() throws Exception {
+        given(bookService.findAll()).willReturn(dbBooks.stream().map(BookDto::fromDomainObject).toList());
+
+
+        mvc.perform(get("/api/books"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(bookService.findAll())));
+    }
+
+    @Test
+    void shouldReturnExpectedErrorWhenPersonsNotFound() throws Exception {
+        given(bookService.findAll()).willReturn(List.of());
+
+        mvc.perform(get("/api/books"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(ERROR_STRING));
+    }
+
+    @Test
+    void shouldCorrectSaveNewPerson() throws Exception {
+        BookDto book = BookDto.fromDomainObject(dbBooks.get(0));
+        given(bookService.update(any(),any(), any(), any())).willReturn(book);
+        String expectedResult = mapper.writeValueAsString(book);
+
+        mvc.perform(post("/api/books").contentType(APPLICATION_JSON)
+                        .content(expectedResult))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResult));
+    }
+
+    @Test
+    void shouldCorrectDeleteNewPerson() throws Exception {
+        String expectedResult = mapper.writeValueAsString(dbBooks.get(0));
+
+        mvc.perform(get("/api/books/" + dbBooks.get(0).getId()).contentType(APPLICATION_JSON)
+                        .content(expectedResult))
+                .andExpect(status().isOk());
+    }
+
 }
