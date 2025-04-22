@@ -33,15 +33,15 @@
     <thead>
     <tr>
         <th>Title</th>
-        <th>Action</th>
         <th>Author</th>
         <th>Genres</th>
         <th>Comments</th>
+        <th>Edit</th>
+        <th>Delete</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="book : ${books}">
-        <td th:text="${book.title}"></td>
         <td th:text="${book.title}"><span th:text="${book.title}" th:remove="tag">book</span></td>
         <td th:text="${book.author.fullName}"></td>
         <td th:text="${book.genres}"></td>
@@ -52,6 +52,9 @@
 
         <td>
             <a href="edit.html" th:href="@{/edit(id=${book.id})}">Edit</a>
+        </td>
+        <td>
+            <a href="list.html" th:href="@{/delete(id=${book.id})}">Delete</a>
         </td>
     </tr>
     </tbody>
