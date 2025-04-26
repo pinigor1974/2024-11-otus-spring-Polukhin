@@ -93,11 +93,24 @@
             })
     }
     function deleteBook(bookId) {
-            $.get('/api/books/delete/' + bookId).done(function () {
+        $.ajax({
+            url: '/api/books/' + bookId,
+            method: 'DELETE',
+            dataType: 'json',
+            success: function(data){
+                $('tbody').empty();
                 $.get('/api/books').done(function (books) {
                      loadBooks(books);
-                })
-        })
+                });
+            },
+            error: function (jqXHR, exception) {
+                $('tbody').empty();
+                $.get('/api/books').done(function (books) {
+                     loadBooks(books);
+                });
+            }
+        });
+
 
     }
     function loadSystemInfo() {

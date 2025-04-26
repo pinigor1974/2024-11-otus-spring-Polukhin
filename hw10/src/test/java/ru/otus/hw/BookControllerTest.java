@@ -13,8 +13,7 @@ import java.util.stream.IntStream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -120,7 +119,7 @@ class BookControllerTest {
         given(bookService.update(any(),any(), any(), any())).willReturn(book);
         String expectedResult = mapper.writeValueAsString(book);
 
-        mvc.perform(post("/api/books").contentType(APPLICATION_JSON)
+        mvc.perform(put("/api/books").contentType(APPLICATION_JSON)
                         .content(expectedResult))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedResult));
@@ -130,7 +129,7 @@ class BookControllerTest {
     void shouldCorrectDeleteNewPerson() throws Exception {
         String expectedResult = mapper.writeValueAsString(dbBooks.get(0));
 
-        mvc.perform(get("/api/books/" + dbBooks.get(0).getId()).contentType(APPLICATION_JSON)
+        mvc.perform(delete("/api/books/" + dbBooks.get(0).getId()).contentType(APPLICATION_JSON)
                         .content(expectedResult))
                 .andExpect(status().isOk());
     }
