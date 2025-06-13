@@ -5,13 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.Id;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
+@Data
 @Builder
 @Table(name = "users")
 @Entity

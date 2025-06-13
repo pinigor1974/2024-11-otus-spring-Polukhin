@@ -2,7 +2,6 @@ package ru.otus.hw.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +44,7 @@ public class BookController {
 
 
     @PutMapping("/api/books")
-    public ResponseEntity<BookDto> saveBook(@Valid @RequestBody BookDto book) {
+    public ResponseEntity<BookDto> saveBook(@RequestBody BookDto book) {
         if (book.getId() > 0) {
             return ResponseEntity
                     .ok(bookService.update(book.getId(), book.getTitle(), book.getAuthorId(), book.getGenreIds()));

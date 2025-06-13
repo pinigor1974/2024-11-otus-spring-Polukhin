@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
@@ -24,6 +26,7 @@ import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 import ru.otus.hw.models.Genre;
 import ru.otus.hw.repositories.BookRepository;
+import ru.otus.hw.security.SecurityConfiguration;
 import ru.otus.hw.services.BookService;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -34,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest(classes = {Application.class})
+@Import(SecurityConfiguration.class)
 class BookControllerTest {
 
     @Autowired
@@ -59,6 +63,7 @@ class BookControllerTest {
         dbGenres = getDbGenres();
         dbComments = getDbComments();
         dbBooks = getDbBooks(dbAuthors, dbGenres, dbComments);
+        given(bookService.findAll()).willReturn(dbBooks.stream().map(BookDto::fromDomainObject).toList());
 
     }
 
@@ -100,12 +105,34 @@ class BookControllerTest {
     }
 
     @Test
-    public void testAuthenticatedOnAdmin() throws Exception {
-        mvc.perform(get("/")
+    public void testAuthenticatedOnBooksEndpoint() throws Exception {
+        mvc.perform(get("/api/books")
                         .with(user("user").authorities(new SimpleGrantedAuthority("ROLE_USER"))))
                 .andExpect(status().isOk());
     }
 
 
+    @Test
+    public void testAuthenticatedOnGetBookEndpoint() throws Exception {
+        mvc.perform(get("/api/books/1")
+                        .with(user("user").authorities(new SimpleGrantedAuthority("ROLE_USER"))))
+                .andExpect(status().isOk());
+    }
 
+    @Test
+    public void testAuthenticatedOnDeleteBookEndpoint() throws Exception {
+        mvc.perform(delete("/api/books/1")
+                        .with(user("user").authorities(new SimpleGrantedAuthority("ROLE_USER"))))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testAuthenticatedOnPutBookEndpoint() throws Exception {
+        mvc.perform(put("/api/books")
+                        .with(user("user").authorities(new SimpleGrantedAuthority("ROLE_USER")))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString( BookDto.builder().id(1).title("title1").build()))
+                )
+                .andExpect(status().isOk());
+    }
 }

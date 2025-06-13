@@ -18,4 +18,4 @@ values (1, 'Comment_1'),   (1, 'Comment_2'),
        (3, 'Comment_5'),   (3, 'Comment_6');
 
  insert into users(name, password, role)
- values('user', 'password', 'ROLE_USER');
+ values('user', '$2a$10$Feteh91U9skzPBB9P8HYkuvH4BrFlJfDy/xk0Ps.rizCoahFcT4Oe', 'ROLE_USER');
