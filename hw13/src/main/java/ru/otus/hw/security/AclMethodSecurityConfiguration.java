@@ -3,7 +3,6 @@ package ru.otus.hw.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
-import org.springframework.security.acls.model.AclService;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 
@@ -13,7 +12,7 @@ public class AclMethodSecurityConfiguration
         extends GlobalMethodSecurityConfiguration {
 
     @Autowired
-    MethodSecurityExpressionHandler
+    private MethodSecurityExpressionHandler
             defaultMethodSecurityExpressionHandler;
 
     @Override
