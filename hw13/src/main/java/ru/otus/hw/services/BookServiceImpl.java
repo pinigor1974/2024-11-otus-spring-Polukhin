@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.dto.BookDto;
@@ -48,12 +49,14 @@ public class BookServiceImpl implements BookService {
         return books.stream().map(BookDto::fromDomainObject).toList();
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @Transactional
     @Override
     public BookDto insert(String title, Long authorId, Set<Long> genresIds) {
         return BookDto.fromDomainObject(save(0, title, authorId, genresIds));
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @Transactional
     @Override
     public BookDto update(Long id, String title, Long authorId, Set<Long> genresIds) {
@@ -61,6 +64,7 @@ public class BookServiceImpl implements BookService {
     }
 
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @Transactional
     @Override
     public void deleteById(Long id) {
