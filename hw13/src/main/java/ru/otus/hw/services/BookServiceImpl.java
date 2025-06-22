@@ -2,9 +2,9 @@ package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.dto.BookDto;
@@ -29,7 +29,10 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
 
-    @PostAuthorize("hasPermission(returnObject, 'READ')")
+    private final AclServiceWrapperService aclServiceWrapperService;
+
+
+    @PreAuthorize("canRead(#id, T(ru.otus.hw.dto.BookDto))")
     @Transactional(readOnly = true)
     @Override
     public BookDto findById(long id) {
@@ -53,7 +56,10 @@ public class BookServiceImpl implements BookService {
     @Transactional
     @Override
     public BookDto insert(String title, Long authorId, Set<Long> genresIds) {
-        return BookDto.fromDomainObject(save(0, title, authorId, genresIds));
+        var book = BookDto.fromDomainObject(save(0, title, authorId, genresIds));
+        aclServiceWrapperService.createPermission(book, BasePermission.READ);
+        return book;
+
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")

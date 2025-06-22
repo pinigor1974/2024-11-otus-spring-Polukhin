@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS acl_class (
 
 CREATE TABLE IF NOT EXISTS acl_entry (
   id bigint NOT NULL AUTO_INCREMENT,
-  acl_object_identity varchar(255) NOT NULL,
+  acl_object_identity int NOT NULL,
   ace_order int NOT NULL,
   sid bigint NOT NULL,
   mask int NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS acl_entry (
 CREATE TABLE IF NOT EXISTS acl_object_identity (
   id bigint NOT NULL AUTO_INCREMENT,
   object_id_class bigint NOT NULL,
-  object_id_identity varchar(255) NOT NULL,
+  object_id_identity bigint NOT NULL,
   parent_object bigint DEFAULT NULL,
   owner_sid bigint DEFAULT NULL,
   entries_inheriting int NOT NULL,
