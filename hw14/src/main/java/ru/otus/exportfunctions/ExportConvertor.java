@@ -37,13 +37,13 @@ public class ExportConvertor {
 	public Function<Book, ExportedBook> convertToBookExported = b -> {
 		var exportedBook = new ExportedBook();
 		exportedBook.setTitle(b.getTitle());
-/*
+
 		exportedBook.setAuthors(
 				b.getAuthors().stream().map(a -> new ExportedAuthor(a.getName())).toList()
 		);
 		exportedBook.setGenres(
 				b.getGenres().stream().map(g -> new ExportedGenre(g.getName())).toList()
-		);*/
+		);
 		return exportedBook;
 	};
 
