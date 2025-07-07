@@ -1,0 +1,45 @@
+spring:
+  messages:
+    encoding: UTF-8
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+  sql:
+    init:
+      mode: always
+
+
+  jpa:
+    open-in-view: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+
+    show-sql: true
+
+logging:
+  file:
+    name: actuator.log
+  level:
+    org:
+      springframework:
+        web: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health, logfile, metrics"
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      status:
+        order: "fatal,down,out-of-service,unknown,up"
+  logging:
+    level:
+      root: info
+      logfile:
+        enabled: true
+        file:
+          name: actuator.log
