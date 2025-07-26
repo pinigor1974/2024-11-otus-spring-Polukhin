@@ -12,7 +12,7 @@
     </parent>
 
     <groupId>ru.otus.hw</groupId>
-    <artifactId>hw16-spring-actuator</artifactId>
+    <artifactId>hw17-spring-docker</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -51,14 +51,6 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-rest</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
 
@@ -86,7 +78,11 @@
             <scope>runtime</scope>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
